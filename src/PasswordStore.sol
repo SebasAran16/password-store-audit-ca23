@@ -34,7 +34,8 @@ contract PasswordStore {
     /*
      * @notice This function allows only the owner to set a new password.
      * @param newPassword The new password to set.
-     * @audit Password is saved unencrypted to the public blockchain data.
+     * @audit-high Password is saved unencrypted to the public blockchain data.
+     * @audit-high Non-restricted method. Anyone can set a new password.
      */
     function setPassword(string memory newPassword) external {
         s_password = newPassword;
@@ -44,7 +45,7 @@ contract PasswordStore {
     /*
      * @notice This allows only the owner to retrieve the password.
      * @param newPassword The new password to set.
-     * @audit newPassword param does not exist.
+     * @audit-i newPassword param does not exist.
      */
     function getPassword() external view returns (string memory) {
         if (msg.sender != s_owner) {
