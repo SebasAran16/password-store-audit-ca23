@@ -32,3 +32,64 @@ cast storage <CONTRACT_ADDRESS> 1 --rpc-url http://127.0.0.1:8545 | xargs -I PAS
 **Recommended Mitigation:** Due to this finding the architecture of the contract should be rethought.
 
 One possible wat to solve this is to encrypt the password off-chain, and save the encrypted result on-chain. However, this would require te user to remember a decryption password off-chain to get the original one. Additionally, there is caution needed when maintaining a getter for the original password, as this would require sending the decryption password creating a possible vulnerability of exposing it, meaning exposing the original one.
+
+### [S-#] High impact method 'PasswordStore::setPassword' not restricted. Anyone can set a new password
+
+**Description:** Although the 'PasswordStore::getPassword' is restricted to owner only, the 'PasswordStore::setPassword' is not restricted. Allowing anyone to set a new password, although it is supposed to only be accessible to the contract's owner.
+
+```javascript
+function setPassword(string memory newPassword) external {
+->      // @audit - No AccessControl        
+        s_password = newPassword;
+        emit SetNetPassword();
+    }
+```
+
+**Impact:** Anyone can set/change the password of the contract, severely breaking the Contract intended functionality.
+
+**Proof of Concept:** The test `testFuzz_anyone_can_set_password` was added to `PasswordStore.t.sol` and is a proof that any random address (not being the owner) can set a new password and next time the owner get the Smart Contract address the new set password by a random address is returned:
+
+<details>
+<summary>Test</summary>
+
+```javascript
+function testFuzz_anyone_can_set_password(address randomAddress) public {
+        vm.assume(randomAddress != owner);
+
+        string memory expectedPassword = "newPassword";
+        vm.prank(randomAddress);
+        passwordStore.setPassword(expectedPassword);
+
+        vm.prank(owner);
+        string memory newPassword = passwordStore.getPassword();
+
+        assertEq(newPassword, expectedPassword);
+    }
+```
+
+</details>
+
+**Recommended Mitigation:** To either extend the `AccessControl` contract from `OpenZeppelin` to the Smart Contract and the usage of the `onlyRole` modifier or limit the usage with the `owner` state variable:
+
+<details>
+<summary>AccessControl</summary>
+
+```javascript
+    function setPassword(string memory newPassword) external onlyRole(OWNER_ROLE) {
+    s_password = newPassword;
+    emit SetNetPassword();
+    }
+```
+
+</details>
+<details>
+<summary>State Variable</summary>
+
+```javascript
+    if (msg.sender != s_owner) {
+    revert PasswordStore_NotOwner();
+}
+_;
+```
+
+</details>
