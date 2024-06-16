@@ -93,3 +93,25 @@ _;
 ```
 
 </details>
+
+### [S-#] TITLE (Root Cause + Impact) `PasswordStore::getPassword` natspec indicates a parameter that does not exist, leaving incorrect documentation of the code.
+
+**Description:** 
+
+```javascript
+    /*
+     * @notice This allows only the owner to retrieve the password.
+->   * @param newPassword The new password to set.
+     */
+    function getPassword() external view returns (string memory) {
+```
+
+The `PasswordStore::getPassword` function signature is `getPassword()` while the natspec say it should be `getPassword(string)`.
+
+**Impact:** Contract documentation is incorrect.
+
+**Recommended Mitigation:** Remove commented line in the Contract natspec.
+
+```diff
+-   * @param newPassword The new password to set.
+```
