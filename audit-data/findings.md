@@ -1,4 +1,4 @@
-### [S-#] Storage State Variable on-chain is publicly accessible despite visibility. Password is not private
+### [H-1] Storage State Variable on-chain is publicly accessible despite visibility. Password is not private
 
 **Description:** Any date stored on-chain is visible to anyone, being readable directly from Blockchain. The `PasswordStore::s_password` variable is intended to be private and only be accessed through `PasswordStore::getPassword`, restricted to the owner of the contract, however the getter method becomes pointless.
 
@@ -33,7 +33,7 @@ cast storage <CONTRACT_ADDRESS> 1 --rpc-url http://127.0.0.1:8545 | xargs -I PAS
 
 One possible wat to solve this is to encrypt the password off-chain, and save the encrypted result on-chain. However, this would require te user to remember a decryption password off-chain to get the original one. Additionally, there is caution needed when maintaining a getter for the original password, as this would require sending the decryption password creating a possible vulnerability of exposing it, meaning exposing the original one.
 
-### [S-#] High impact method 'PasswordStore::setPassword' not restricted. Anyone can set a new password
+### [H-2] High impact method 'PasswordStore::setPassword' not restricted. Anyone can set a new password
 
 **Description:** Although the 'PasswordStore::getPassword' is restricted to owner only, the 'PasswordStore::setPassword' is not restricted. Allowing anyone to set a new password, although it is supposed to only be accessible to the contract's owner.
 
@@ -94,7 +94,7 @@ _;
 
 </details>
 
-### [S-#] TITLE (Root Cause + Impact) `PasswordStore::getPassword` natspec indicates a parameter that does not exist, leaving incorrect documentation of the code.
+### [I-1] `PasswordStore::getPassword` natspec indicates a parameter that does not exist, leaving incorrect documentation of the code.
 
 **Description:** 
 
