@@ -97,5 +97,5 @@ View the [audit-report-templating](https://github.com/Cyfrin/audit-report-templa
 
 ```bash
 cd audits
-pandoc 2023-09-01-password-store-report.md -o report.pdf --from markdown --template=eisvogel --listings
+pandoc report.md -o report.pdf --from markdown --template=eisvogel --listings --pdf-engine=xelatex
 ```
